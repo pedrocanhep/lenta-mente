@@ -1,0 +1,34 @@
+# Compilação e ferramentas
+[Bb]in/
+[Oo]bj/
+.vs/
+.vscode/
+.idea/
+*.user
+*.suo
+node_modules/
+TestResults/
+coverage/
+
+# Configuração da máquina e credenciais
+.env
+.env.*
+appsettings.[Ll]ocal.json
+appsettings.*.[Ll]ocal.json
+*.pfx
+*.key
+*.pem
+.agents/
+.codex/
+.aws/
+
+# Arquivos temporários e logs
+*.log
+*.bak
+*.pdf
+core
+core.[0-9]*
+*.tmp
+*.swp
+*~
+.DS_Store

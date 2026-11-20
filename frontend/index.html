@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Lenta-Mente</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/api.js" defer></script>
+    <script src="js/app.js" defer></script>
+</head>
+<body>
+    <header class="topo container">
+        <img class="marca" src="assets/logo.png" width="1254" height="1254"
+             alt="Lenta-Mente">
+    </header>
+    <button class="fab" id="btnNovo" type="button" aria-label="Novo lembrete">
+        <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" aria-hidden="true">
+            <path d="M16 5c-1 8-1 15 0 22M5 16c7 1 14 0 22-1"/>
+        </svg>
+        <span class="fab-rotulo" aria-hidden="true">Novo lembrete</span>
+    </button>
+    <main class="container">
+        <div class="cabecalho">
+            <h1>Meus lembretes
+                <svg class="sublinhado" viewBox="0 0 320 22" preserveAspectRatio="none" fill="none" aria-hidden="true">
+                    <path d="M4 15C83 4 193 2 314 8M38 19c75-7 164-7 210-6"/>
+                </svg>
+            </h1>
+            <button id="btnImprimir" type="button" title="Baixar relatório da página atual" disabled>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 3c1 4 0 8 0 12m-4-4 4 4 4-5M5 15l1 5 13-1 1-4"/>
+                </svg>
+                Exportar PDF
+            </button>
+        </div>
+        <div class="caderno">
+            <section class="painel filtros" aria-labelledby="tituloFiltros">
+                <h2 id="tituloFiltros">
+                    <svg viewBox="0 0 28 26" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M3 4c7-1 15-1 22 0l-9 9-.3 7-4 2 .3-9C9 10 5 6 3 4Z"/>
+                    </svg>
+                    Filtros
+                </h2>
+                <form id="formFiltros">
+                    <div class="busca">
+                        <label>Descrição <input type="search" id="filtroDescricao" name="Descricao" placeholder="Buscar"></label>
+                        <label>Por página
+                            <select id="tamanhoPagina" name="TamanhoPagina">
+                                <option value="5">5</option><option value="10" selected>10</option><option value="20">20</option>
+                            </select>
+                        </label>
+                    </div>
+                    <div class="datas">
+                        <fieldset>
+                            <legend>Cadastro</legend>
+                            <label>De <input type="date" name="DataCadastroInicial" min="1000-01-01" max="9999-12-30"></label>
+                            <label>Até <input type="date" name="DataCadastroFinal" min="1000-01-01" max="9999-12-30"></label>
+                        </fieldset>
+                        <fieldset>
+                            <legend>Atualização</legend>
+                            <label>De <input type="date" name="DataAtualizacaoInicial" min="1000-01-01" max="9999-12-30"></label>
+                            <label>Até <input type="date" name="DataAtualizacaoFinal" min="1000-01-01" max="9999-12-30"></label>
+                        </fieldset>
+                    </div>
+                    <div class="acoes">
+                        <button id="btnLimpar" type="button" class="discreto">Limpar filtros</button>
+                        <button id="btnFiltrar" type="submit" class="aplicar">Aplicar filtros</button>
+                    </div>
+                </form>
+            </section>
+            <div class="lista">
+                <p id="toast" class="aviso sucesso" role="status"></p>
+                <p id="erro" class="aviso erro" role="alert"></p>
+                <section class="painel resultados" aria-labelledby="tituloResultados">
+                    <div class="resumo">
+                        <h2 id="tituloResultados">Resultados <span id="totalRegistros">—</span></h2>
+                    </div>
+                    <div id="areaResultados" aria-busy="false">
+                        <div class="tabela" tabindex="0" role="region" aria-label="Tabela de lembretes">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th scope="col"><button type="button" class="ordenar" data-ordem="Descricao">Descrição <span aria-hidden="true">↕</span></button></th>
+                                        <th scope="col"><button type="button" class="ordenar" data-ordem="DataCadastro">Cadastro <span aria-hidden="true">↓</span></button></th>
+                                        <th scope="col"><button type="button" class="ordenar" data-ordem="DataAtualizacao">Atualização <span aria-hidden="true">↕</span></button></th>
+                                        <th scope="col">Ações</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="listaLembretes"></tbody>
+                            </table>
+                        </div>
+                        <p id="mensagemVazia" class="estado" hidden>Nenhum lembrete encontrado.</p>
+                    </div>
+                    <p id="carregamento" class="estado atividade" role="status"></p>
+                    <nav class="paginacao" aria-label="Paginação dos lembretes">
+                        <span id="paginaAtual">Página —</span>
+                        <div class="acoes">
+                            <button id="btnAnterior" type="button" disabled>Anterior</button>
+                            <button id="btnProximo" type="button" disabled>Próxima</button>
+                        </div>
+                    </nav>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <dialog id="formulario" aria-labelledby="tituloFormulario">
+        <h2 id="tituloFormulario">Novo lembrete</h2>
+        <form id="formLembrete">
+            <input type="hidden" id="lembreteId">
+            <label for="descricao">Descrição</label>
+            <textarea id="descricao" maxlength="500" required autofocus rows="4" aria-describedby="limiteDescricao"></textarea>
+            <p class="meta" id="limiteDescricao">Até 500 caracteres.</p>
+            <p id="atividadeFormulario" class="atividade modal-status" role="status"></p>
+            <p id="erroFormulario" class="aviso erro" role="alert"></p>
+            <div class="rodape-modal">
+                <small class="atalho" id="atalhoSalvar"><kbd>Ctrl</kbd> + <kbd>Enter</kbd></small>
+                <div class="acoes">
+                    <button type="button" id="btnCancelar">Cancelar</button>
+                    <button type="submit" id="btnSalvar" class="primario" aria-describedby="atalhoSalvar">Salvar</button>
+                </div>
+            </div>
+        </form>
+    </dialog>
+
+    <dialog id="confirmacaoExclusao" aria-labelledby="tituloExclusao" aria-describedby="avisoExclusao">
+        <h2 id="tituloExclusao">Excluir lembrete?</h2>
+        <p id="avisoExclusao">O lembrete será removido da sua lista.</p>
+        <p id="atividadeExclusao" class="atividade modal-status" role="status"></p>
+        <p id="erroExclusao" class="aviso erro" role="alert"></p>
+        <form id="formExclusao" class="acoes">
+            <button type="button" id="btnCancelarExclusao" autofocus>Cancelar</button>
+            <button type="submit" id="btnConfirmarExclusao" class="destrutivo">Excluir</button>
+        </form>
+    </dialog>
+
+    <template id="linhaLembrete">
+        <tr>
+            <td class="descricao"></td>
+            <td class="data" data-rotulo="Cadastro"></td>
+            <td class="data" data-rotulo="Atualização"></td>
+            <td><div class="acoes linha">
+                <button type="button" class="discreto editar">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="m4 13-1 4 4-1L17 6l-3-3L4 13Zm8-8 3 3"/>
+                    </svg>Editar
+                </button>
+                <button type="button" class="discreto excluir">
+                    <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 6c4-1 8 0 12 0M8 5l1-2h3l1 2M5 7l1 10h8l1-10M8 9v5m4-5-.5 5"/>
+                    </svg>Excluir
+                </button>
+            </div></td>
+        </tr>
+    </template>
+</body>
+</html>

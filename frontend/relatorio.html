@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Pré-visualização do relatório | Lenta-Mente</title>
+    <link rel="icon" type="image/png" href="assets/logo.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/relatorio.css">
+    <script src="js/api.js" defer></script>
+    <script src="js/relatorio.js" defer></script>
+</head>
+<body>
+    <header class="topo">
+        <img class="marca" src="assets/logo.png" width="1254" height="1254" alt="Lenta-Mente">
+    </header>
+    <main class="container relatorio">
+        <header class="cabecalho">
+            <h1>Pré-visualização do relatório</h1>
+            <div class="acoes-relatorio">
+                <a id="voltar" class="acao-relatorio" href="./">Voltar</a>
+                <button id="baixar" class="primario" type="button" disabled>Baixar PDF</button>
+            </div>
+        </header>
+        <p id="estado-relatorio" role="status">Gerando relatório…</p>
+        <button id="tentar" type="button" hidden>Tentar novamente</button>
+        <iframe id="documento" title="Relatório de lembretes em PDF" hidden></iframe>
+    </main>
+</body>
+</html>
